@@ -84,7 +84,7 @@ def main():
     job_queue = updater.job_queue
 
     # create job and start program
-    job_queue.run_repeating(callback_timer, interval=conf.HOURS*60, first=0)
+    job_queue.run_repeating(callback_timer, interval=conf.HOURS*60*60, first=0)
     updater.start_polling()
 
 
