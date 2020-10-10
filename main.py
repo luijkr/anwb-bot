@@ -58,6 +58,7 @@ def callback_timer(context):
             city = format_location(doc.get("company").get("city"))
             province = format_location(doc.get("company").get("province"))
             price = format_price(doc.get("vehicle").get("askingPrice"))
+            registration = doc.get("vehicle").get("dateFirstRegistration")
             mileage = format_mileage(doc.get("vehicle").get("mileageInKm"))
             timestamp_posted = (datetime.fromtimestamp(doc.get("meta").get("createdAt") / 1000.0)).strftime("%d %b %Y, %H:%M")
             id = doc.get("id")
@@ -67,8 +68,8 @@ def callback_timer(context):
             url = "https://www.anwb.nl/auto/kopen/detail/merk=renault/model=clio/overzicht/{}".format(id)
             img_url = get_cover_image(doc)
 
-            msg = "Km: {}\nPrijs: {}\nPlaats: {} ({})\nGeplaatst op: {}\nLocatie dealer: [Google Maps]({})\nMeer info: [ANWB]({})".format(
-                mileage, price, city, province, timestamp_posted, location, url
+            msg = "Km: {}\nPrijs: {}\nGeregistreerd: {}\nPlaats: {} ({})\nGeplaatst op: {}\nLocatie dealer: [Google Maps]({})\nMeer info: [ANWB]({})".format(
+                mileage, price, registration, city, province, timestamp_posted, location, url
             )
             if img_url is not None:
                 context.bot.send_photo(chat_id=conf.CHAT_ID, photo=img_url)
