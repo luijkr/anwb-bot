@@ -9,7 +9,7 @@ class Parameter:
 class Config:
     TOKEN = "1318733250:AAEJXft0OfQ-cVsoucGgyeKeBdRQunRQEGY"
     CHAT_ID = "1325598558"
-    HOURS = 12
+    HOURS = 8
 
     # API endoint
     ENDPOINT = "https://api.anwb.nl/occasion-hexon-search"

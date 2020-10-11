@@ -52,7 +52,7 @@ def format_location(x):
 def callback_timer(context):
     response = call_api()
     results = get_latest(response.get("results"))
-    if results is not None:
+    if results is not None and len(results) > 0:
         context.bot.send_message(chat_id=conf.CHAT_ID, text="Nieuwe waggies! Zie hier de {} nieuwste:".format(len(results)), parse_mode="MARKDOWN", disable_web_page_preview=True)
         for doc in results:
             city = format_location(doc.get("company").get("city"))
@@ -84,8 +84,11 @@ def main():
     updater = Updater(conf.TOKEN)
     job_queue = updater.job_queue
 
+    # force a first call
+    job_queue.run_once(callback_timer, when=0)
+
     # create job and start program
-    job_queue.run_repeating(callback_timer, interval=conf.HOURS*60*60, first=0)
+    job_queue.run_repeating(callback_timer, interval=timedelta(hours=conf.HOURS))
     updater.start_polling()
 
 
