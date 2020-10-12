@@ -8,12 +8,12 @@ conf = Config()
 
 
 def call_api():
-    import json
-    return json.load(open("response.json"))
-    # params = conf.get_url_params()
-    # headers = conf.get_headers()
-    # r = requests.get(conf.ENDPOINT, params=params, headers=headers)
-    # return r.json()
+    # import json
+    # return json.load(open("response.json"))
+    params = conf.get_url_params()
+    headers = conf.get_headers()
+    r = requests.get(conf.ENDPOINT, params=params, headers=headers)
+    return r.json()
 
 
 def get_latest(results):
