@@ -1,5 +1,4 @@
 import requests
-import sqlite3
 from datetime import datetime, timedelta
 from telegram.ext import Updater
 from config import Config
@@ -53,6 +52,7 @@ def format_location(x):
 def callback_timer(context):
     response = call_api()
     results = get_latest(response.get("results"))
+
     if results is not None and len(results) > 0:
         context.bot.send_message(chat_id=conf.CHAT_ID, text="Nieuwe waggies! Zie hier de {} nieuwste:".format(len(results)), parse_mode="MARKDOWN", disable_web_page_preview=True)
         for doc in results:
@@ -71,9 +71,6 @@ def callback_timer(context):
             url = "https://www.anwb.nl/auto/kopen/detail/merk=renault/model=clio/overzicht/{}".format(id)
             img_url = get_cover_image(doc)
 
-            # add to db
-            cursor.execute('INSERT OR REPLACE INTO occasions VALUES (?,?,?,?,?,?,?,?,?,?)', (mileage, price, registration, city, province, timestamp_posted, lat, lon, url, img_url))
-
             # create message
             msg = "Km: {}\nPrijs: {}\nGeregistreerd: {}\nPlaats: {} ({})\nGeplaatst op: {}\nLocatie dealer: [Google Maps]({})\nMeer info: [ANWB]({})".format(
                 format_mileage(mileage), format_price(price), registration, city, province, date_posted, location, url
@@ -82,8 +79,6 @@ def callback_timer(context):
                 context.bot.send_photo(chat_id=conf.CHAT_ID, photo=img_url)
 
             context.bot.send_message(chat_id=conf.CHAT_ID, text=msg, parse_mode="MARKDOWN", disable_web_page_preview=True)
-
-        conn.commit()
     else:
         context.bot.send_message(chat_id=conf.CHAT_ID, text="Geen nieuwe waggies :(", disable_web_page_preview=True)
 
@@ -94,26 +89,12 @@ def main():
     job_queue = updater.job_queue
 
     # force a first call
-    # job_queue.run_once(callback_timer, when=0)
+    job_queue.run_once(callback_timer, when=0)
 
     # create job and start program
-    job_queue.run_repeating(callback_timer, interval=timedelta(minutes=2))
+    job_queue.run_repeating(callback_timer, interval=timedelta(HOURS=conf.HOURS))
     updater.start_polling()
 
 
 if __name__ == "__main__":
-    # create db connection
-    conn = sqlite3.connect("anwb.db")
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        CREATE TABLE IF NOT EXISTS occasions
-        (
-            mileage INTEGER, price INTEGER, registration TEXT, city TEXT, province TEXT,
-            timestamp_posted TEXT, lat REAL, lon REAL, url TEXT, img_url TEXT
-        )
-        """
-    )
-    conn.commit()
-
     main()
