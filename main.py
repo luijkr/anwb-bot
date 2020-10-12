@@ -92,7 +92,7 @@ def main():
     job_queue.run_once(callback_timer, when=0)
 
     # create job and start program
-    job_queue.run_repeating(callback_timer, interval=timedelta(HOURS=conf.HOURS))
+    job_queue.run_repeating(callback_timer, interval=timedelta(hours=conf.HOURS))
     updater.start_polling()
 
 
