@@ -87,13 +87,9 @@ def main():
     # create updater
     updater = Updater(conf.TOKEN)
     job_queue = updater.job_queue
-
-    # force a first call
     job_queue.run_once(callback_timer, when=0)
-
-    # create job and start program
-    job_queue.run_repeating(callback_timer, interval=timedelta(hours=conf.HOURS))
     updater.start_polling()
+    updater.stop()
 
 
 if __name__ == "__main__":
